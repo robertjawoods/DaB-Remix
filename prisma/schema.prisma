@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String                @id
+  email               String                @unique
+  LessonsCompleted    LessonsCompleted[]
+  HomeworkCompleted   HomeworkCompleted[]
+  ChallengesCompleted ChallengesCompleted[]
+  FiftyTime           FiftyTime[]
+}
+
+model Lesson {
+  id               Int                @id @default(autoincrement())
+  name             String
+  index            Int
+  LessonsCompleted LessonsCompleted[]
+}
+
+model Homework {
+  id                Int                 @id @default(autoincrement())
+  name              String
+  HomeworkCompleted HomeworkCompleted[]
+}
+
+model Challenge {
+  id                  Int                   @id @default(autoincrement())
+  name                String
+  ChallengesCompleted ChallengesCompleted[]
+}
+
+model LessonsCompleted {
+  id             Int       @id @default(autoincrement())
+  user           User      @relation(fields: [userId], references: [id])
+  lesson         Lesson    @relation(fields: [lessonId], references: [id])
+  watchedVideo   Boolean
+  readText       Boolean
+  completionDate DateTime?
+  userId         String
+  lessonId       Int
+
+  @@unique([lessonId, userId])
+}
+
+model HomeworkCompleted {
+  id                 Int       @id @default(autoincrement())
+  user               User      @relation(fields: [userId], references: [id])
+  homework           Homework  @relation(fields: [homeworkId], references: [id])
+  lastCompletionDate DateTime?
+  userId             String
+  homeworkId         Int
+
+  @@unique([homeworkId, userId])
+}
+
+model ChallengesCompleted {
+  id             Int       @id @default(autoincrement())
+  challenge      Challenge @relation(fields: [challengeId], references: [id])
+  user           User      @relation(fields: [userId], references: [id])
+  completedCount Int       @default(0)
+  challengeId    Int
+  userId         String
+
+  @@unique([challengeId, userId])
+}
+
+model FiftyTime {
+  id      Int    @id @default(autoincrement())
+  days    Int    @default(0)
+  hours   Int    @default(0)
+  minutes Int    @default(0)
+  seconds Int    @default(0)
+  user    User   @relation(fields: [userId], references: [id])
+  userId  String
+}

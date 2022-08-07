@@ -6,24 +6,36 @@ import { json } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import { db } from "~/utils/db.server"
 import { formatDate } from "~/utils/formatDate";
+import { logger } from "~/utils/logger";
 
 type LoaderData = { homework: Array<HomeworkCompleted> };
 
 export const loader: LoaderFunction = async ({ request }) => {
     const { userId } = await getAuth(request)
 
-    const data: LoaderData = {
-        homework: await db.homeworkCompleted.findMany({
-            where: {
-                userId: userId ?? ""
-            },
-            include: {
-                homework: true
-            }
-        })
-    }
+    logger?.info("Fetching homework completed data for user", {
+        userId: userId
+    })
 
-    return json(data)
+    try {
+        const data: LoaderData = {
+            homework: await db.homeworkCompleted.findMany({
+                where: {
+                    userId: userId ?? ""
+                },
+                include: {
+                    homework: true
+                }
+            })
+        }    
+
+        return json(data)
+    } catch (err: any) { 
+        logger?.error("Unable to load homework completed data for user", { 
+            userId: userId, 
+            message: err.message
+        })
+    }      
 }
 
 export const action: ActionFunction = async ({ request }) => {

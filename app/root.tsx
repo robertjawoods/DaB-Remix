@@ -4,7 +4,7 @@ import { MantineProvider, ColorSchemeProvider } from '@mantine/core';
 import { StylesPlaceholder } from '@mantine/remix';
 import { Navbar } from './components/Navbar';
 import { useLocalStorage } from '@mantine/hooks';
-import type { LoaderFunction } from "@remix-run/node";
+import type { LinksFunction, LoaderFunction } from "@remix-run/node";
 import { rootAuthLoader } from "@clerk/remix/ssr.server";
 import { ClerkApp } from "@clerk/remix";
 import { ClerkCatchBoundary } from "@clerk/remix";
@@ -16,6 +16,17 @@ export const loader: LoaderFunction = (args) => process.env.NODE_ENV === 'produc
     console.log("Root loader auth:", { userId, sessionId, getToken });
     return { message: `Hello from the root loader :)` };
   });
+
+
+export const links: LinksFunction = () => {
+    return [ 
+      {
+        rel: 'icon',
+        href: '/favicon.ico',
+        type: 'image/ico'
+      }
+    ]
+}
 
 const COLOR_SCHEME_KEY = 'mantine-color-scheme'
 

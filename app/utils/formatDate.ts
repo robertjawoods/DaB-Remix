@@ -1,6 +1,6 @@
 import { format } from "date-fns"
 
-const formatDate = (dateString: string | null) => { 
+const formatDate = (dateString: Date | string | null) => { 
     if (!dateString)
         return "Never"
 

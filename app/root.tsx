@@ -9,13 +9,7 @@ import { rootAuthLoader } from "@clerk/remix/ssr.server";
 import { ClerkApp } from "@clerk/remix";
 import { ClerkCatchBoundary } from "@clerk/remix";
 
-export const loader: LoaderFunction = (args) => process.env.NODE_ENV === 'production' ? rootAuthLoader(args, { loadUser: true }) : rootAuthLoader(args,
-  ({ request }) => {
-    const { userId, sessionId, getToken } = request.auth
-
-    console.log("Root loader auth:", { userId, sessionId, getToken });
-    return { message: `Hello from the root loader :)` };
-  });
+export const loader: LoaderFunction = (args) =>  rootAuthLoader(args, { loadUser: true });
 
 
 export const links: LinksFunction = () => {

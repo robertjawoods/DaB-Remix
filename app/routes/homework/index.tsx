@@ -10,8 +10,8 @@ import { logger } from "~/utils/logger";
 
 type LoaderData = { homework: Array<HomeworkCompleted> };
 
-export const loader: LoaderFunction = async ({ request }) => {
-    const { userId } = await getAuth(request)
+export const loader: LoaderFunction = async (args) => {
+    const { userId } = await getAuth(args)
 
     logger?.info("Fetching homework completed data for user", {
         userId: userId
@@ -38,9 +38,9 @@ export const loader: LoaderFunction = async ({ request }) => {
     }      
 }
 
-export const action: ActionFunction = async ({ request }) => {
-    const { userId } = await getAuth(request)
-    const body = await request.formData();
+export const action: ActionFunction =  async (args) => {
+    const { userId } = await getAuth(args)
+    const body = await args.request.formData();
     const homeworkId = Number(body.get("homeworkId") ?? 0)
 
     await db.homeworkCompleted.update({

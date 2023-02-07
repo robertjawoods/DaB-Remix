@@ -10,8 +10,8 @@ import { LessonRow } from "~/components/LessonRow";
 
 type LoaderData = { lessons: Array<LessonsCompleted> }
 
-export const loader: LoaderFunction = async ({ request }) => {
-    const { userId } = await getAuth(request)
+export const loader: LoaderFunction = async (args) => {
+    const { userId } = await getAuth(args)
 
     const data: LoaderData = {
         lessons: await db.lessonsCompleted.findMany({
@@ -35,9 +35,9 @@ export const loader: LoaderFunction = async ({ request }) => {
     return json(data)
 }
 
-export const action: ActionFunction = async ({ request }) => {
-    const { userId } = await getAuth(request)
-    const formData = await request.formData();
+export const action: ActionFunction =  async (args) => {
+    const { userId } = await getAuth(args)
+    const formData = await args.request.formData();
 
     console.log(formData.entries())
 

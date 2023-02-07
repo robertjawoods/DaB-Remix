@@ -15,8 +15,8 @@ type LoaderData = {
     lessonsCompleted: Array<LessonsCompleted>
 }
 
-export const loader: LoaderFunction = async ({ request }) => {
-    const { userId } = await getAuth(request);
+export const loader: LoaderFunction = async (args) => {
+    const { userId } = await getAuth(args)
 
     const data: LoaderData = {
         homeworkCompleted: await db.homeworkCompleted.findMany({

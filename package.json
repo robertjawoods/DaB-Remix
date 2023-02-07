@@ -7,13 +7,14 @@
     "dev:node": "cross-env NODE_ENV=development nodemon ./server.js --watch ./server.js",
     "dev:remix": "remix watch",
     "start": "cross-env NODE_ENV=production node ./server.js",
-    "tunnel": "ngrok http 3000 --subdomain dab-dev"
+    "tunnel": "ngrok http 3000 --subdomain dab-dev",
+    "seed": "cross-env DATABASE_URL= ts-node .\\prisma\\seed.ts"
   },
   "prisma": {
     "seed": "node --require esbuild-register prisma/seed.ts"
   },
   "dependencies": {
-    "@clerk/remix": "^0.5.14",
+    "@clerk/remix": "^2.1.1",
     "@emotion/react": "^11.10.0",
     "@emotion/server": "^11.10.0",
     "@fortawesome/fontawesome-svg-core": "^6.1.2",

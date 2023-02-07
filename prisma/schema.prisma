@@ -69,6 +69,7 @@ model ChallengesCompleted {
   completedCount Int       @default(0)
   challengeId    Int
   userId         String
+  lastCompletionDate DateTime?
 
   @@unique([challengeId, userId])
 }

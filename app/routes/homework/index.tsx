@@ -1,7 +1,7 @@
 import { getAuth } from "@clerk/remix/ssr.server";
 import { Button, Table, Title } from "@mantine/core"
 import type { HomeworkCompleted } from "@prisma/client"
-import type { ActionFunction, LoaderFunction, MetaFunction } from "@remix-run/node";
+import { ActionFunction, LoaderFunction, MetaFunction, redirect } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import { db } from "~/utils/db.server"
@@ -12,6 +12,9 @@ type LoaderData = { homework: Array<HomeworkCompleted> };
 
 export const loader: LoaderFunction = async (args) => {
     const { userId } = await getAuth(args)
+
+    if (!userId)
+        return redirect("/signin")
 
     logger?.info("Fetching homework completed data for user", {
         userId: userId
@@ -39,7 +42,7 @@ export const loader: LoaderFunction = async (args) => {
 }
 
 export const action: ActionFunction =  async (args) => {
-    const { userId } = await getAuth(args)
+    const { userId } = await getAuth(args);
     const body = await args.request.formData();
     const homeworkId = Number(body.get("homeworkId") ?? 0)
 

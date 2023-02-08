@@ -1,6 +1,6 @@
 import { Checkbox } from "@mantine/core";
 import type { LessonsCompleted } from "@prisma/client";
-import { useSubmit, Form, useFetcher } from "@remix-run/react";
+import { useFetcher } from "@remix-run/react";
 import type { FormEvent } from "react";
 import { useState } from "react";
 import { formatDate } from "~/utils/formatDate";
@@ -8,7 +8,6 @@ import { formatDate } from "~/utils/formatDate";
 type LessonRowProps = { lesson: LessonsCompleted };
  const LessonRow = ({ lesson }: LessonRowProps) => {   
     const fetcher = useFetcher(); 
-    const submit = useSubmit();
     const [watchedVideo, setWatchedVideo] = useState(lesson.watchedVideo)
     const [readText, setReadText] = useState(lesson.readText)
 

@@ -1,7 +1,7 @@
 import { getAuth } from "@clerk/remix/ssr.server"
 import { Table, Title } from "@mantine/core"
 import type { LessonsCompleted } from "@prisma/client"
-import type { ActionFunction, LoaderFunction, MetaFunction } from "@remix-run/node";
+import { ActionFunction, LoaderFunction, MetaFunction, redirect } from "@remix-run/node";
 import { json } from "@remix-run/node"
 import { useLoaderData } from "@remix-run/react"
 import { logger } from "~/utils/logger"
@@ -12,6 +12,8 @@ type LoaderData = { lessons: Array<LessonsCompleted> }
 
 export const loader: LoaderFunction = async (args) => {
     const { userId } = await getAuth(args)
+    if (!userId)
+        return redirect("/signin")
 
     const data: LoaderData = {
         lessons: await db.lessonsCompleted.findMany({

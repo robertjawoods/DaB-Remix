@@ -7,4 +7,10 @@ const formatDate = (dateString: Date | string | null) => {
     return format(new Date(dateString), "PPPppp")
 }
 
-export {formatDate}
+const formatTimeValue = (seconds: number) => { 
+    if (seconds < 10) 
+      return '0' + seconds;
+  
+    return String(seconds);
+  }
+export {formatDate, formatTimeValue}

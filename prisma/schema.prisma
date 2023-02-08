@@ -76,10 +76,8 @@ model ChallengesCompleted {
 
 model FiftyTime {
   id      Int    @id @default(autoincrement())
-  days    Int    @default(0)
-  hours   Int    @default(0)
-  minutes Int    @default(0)
-  seconds Int    @default(0)
+  startDate DateTime
+  endDate DateTime
   user    User   @relation(fields: [userId], references: [id])
   userId  String
 }

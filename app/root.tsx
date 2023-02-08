@@ -3,14 +3,13 @@ import type { ColorScheme } from '@mantine/core';
 import { MantineProvider, ColorSchemeProvider } from '@mantine/core';
 import { StylesPlaceholder } from '@mantine/remix';
 import { Navbar } from './components/Navbar';
-import { useLocalStorage } from '@mantine/hooks';
+import { useColorScheme, useLocalStorage } from '@mantine/hooks';
 import type { LinksFunction, LoaderFunction } from "@remix-run/node";
 import { rootAuthLoader } from "@clerk/remix/ssr.server";
 import { ClerkApp } from "@clerk/remix";
 import { ClerkCatchBoundary } from "@clerk/remix";
 
 export const loader: LoaderFunction = (args) =>  rootAuthLoader(args, { loadUser: true });
-
 
 export const links: LinksFunction = () => {
     return [ 
@@ -38,9 +37,10 @@ const darkColours: any = [
 ]
 
 function App() {
+  const preferredColorScheme = useColorScheme();
   const [colourScheme, setColourScheme] = useLocalStorage<ColorScheme>({
     key: COLOR_SCHEME_KEY,
-    defaultValue: 'light',
+    defaultValue: preferredColorScheme,
     getInitialValueInEffect: true,
   });
 

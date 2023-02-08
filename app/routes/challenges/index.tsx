@@ -1,7 +1,7 @@
 import { getAuth } from "@clerk/remix/ssr.server"
 import { Button, Table, Title } from "@mantine/core"
 import type { ChallengesCompleted } from "@prisma/client"
-import type { ActionFunction, LoaderFunction, MetaFunction } from "@remix-run/node";
+import { ActionFunction, LoaderFunction, MetaFunction, redirect } from "@remix-run/node";
 import { json } from "@remix-run/node"
 import { Form, useLoaderData } from "@remix-run/react"
 import { formatDate } from "~/utils/formatDate";
@@ -12,6 +12,9 @@ type LoaderData = { challenges: Array<ChallengesCompleted> }
 
 export const loader: LoaderFunction = async (args) => {
     const { userId } = await getAuth(args)
+
+    if (!userId)
+        return redirect("/signin")
 
     const data: LoaderData = {
         challenges: await db.challengesCompleted.findMany({

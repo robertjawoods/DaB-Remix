@@ -1,16 +1,14 @@
 import { getAuth } from "@clerk/remix/ssr.server";
-import { Title, Text, Box, Container, Grid } from "@mantine/core";
+import { Title, Text, Box, Grid } from "@mantine/core";
 import type {
   ChallengesCompleted,
   HomeworkCompleted,
   LessonsCompleted,
 } from "@prisma/client";
-import { LoaderFunction, redirect } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { LoaderArgs, redirect } from "@remix-run/node";
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
-import { da } from "date-fns/locale";
 import { Doughnut } from "react-chartjs-2";
+import { json, useLoaderData } from "~/utils";
 import { db } from "~/utils/db.server";
 import { formatTimeValue } from "~/utils/formatDate";
 
@@ -26,7 +24,7 @@ type LoaderData = {
   };
 };
 
-export const loader: LoaderFunction = async (args) => {
+export const loader = async (args: LoaderArgs) => {
   const { userId } = await getAuth(args);
 
   if (!userId) return redirect("/signin");

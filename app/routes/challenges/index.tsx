@@ -1,20 +1,21 @@
 import { getAuth } from "@clerk/remix/ssr.server"
 import { Button, Table, Title } from "@mantine/core"
-import type { ChallengesCompleted } from "@prisma/client"
-import { ActionFunction, LoaderFunction, MetaFunction, redirect } from "@remix-run/node";
-import { json } from "@remix-run/node"
-import { Form, useLoaderData } from "@remix-run/react"
+import { Prisma } from "@prisma/client"
+import { ActionFunction, LoaderArgs, MetaFunction, redirect } from "@remix-run/node";
+import { Form } from "@remix-run/react"
+import { json, useLoaderData} from "~/utils"
 import { formatDate } from "~/utils/formatDate";
-
 import { db } from "~/utils/db.server"
+
+type ChallengesCompleted = Prisma.ChallengesCompletedGetPayload<{include: { challenge: true }}>;
 
 type LoaderData = { challenges: Array<ChallengesCompleted> }
 
-export const loader: LoaderFunction = async (args) => {
-    const { userId } = await getAuth(args)
+export async function loader(args: LoaderArgs) {
+    const { userId } = await getAuth(args);
 
     if (!userId)
-        return redirect("/signin")
+        return redirect("/signin");
 
     const data: LoaderData = {
         challenges: await db.challengesCompleted.findMany({
@@ -28,14 +29,13 @@ export const loader: LoaderFunction = async (args) => {
                 challengeId: "asc"
             }
         })
-    }
+    };
 
-    return json(data)
+    return json(data);
 }
 
 export const action: ActionFunction =  async (args) => {
     const { userId } = await getAuth(args)
-
 
     if (!userId) {
         return null
@@ -44,12 +44,13 @@ export const action: ActionFunction =  async (args) => {
     const body = await args.request.formData();
     const challengeId = Number(body.get("challengeId") ?? 0) 
 
+    console.log(`Adding completion for challenge id ${challengeId} for ${userId}`)
 
     await db.challengesCompleted.update({
         where: {
             challengeId_userId: { 
-                challengeId: challengeId,
-                userId: userId ?? ""
+                challengeId,
+                userId
             }
         }, 
         data: {
@@ -77,7 +78,7 @@ export default function Challenges() {
             <td>{formatDate(challenge.lastCompletionDate) ?? "Never"}</td>
             <td>
                 <Form method="post">
-                    <input type={"hidden"} name="challengeId" value={challenge.id} />
+                    <input type={"hidden"} name="challengeId" value={challenge.challengeId} />
                     <Button type="submit">Log Completion</Button>
                 </Form>                
             </td>
@@ -99,6 +100,5 @@ export default function Challenges() {
                 <tbody>{rows}</tbody>
             </Table>
         </>
-
     )
 }

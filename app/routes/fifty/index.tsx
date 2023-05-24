@@ -13,9 +13,6 @@ export const meta: MetaFunction = () => {
   };
 };
 
-
-
-
 export const action: ActionFunction =  async (args) => {
   const { userId } = await getAuth(args)
 

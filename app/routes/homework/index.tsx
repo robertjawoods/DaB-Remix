@@ -1,30 +1,32 @@
 import { getAuth } from "@clerk/remix/ssr.server";
 import { Button, Table, Title } from "@mantine/core"
-import type { HomeworkCompleted } from "@prisma/client"
-import { ActionFunction, LoaderFunction, MetaFunction, redirect } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Prisma } from "@prisma/client"
+import { ActionFunction, LoaderArgs, MetaFunction, redirect } from "@remix-run/node";
+import { json, useLoaderData} from "~/utils"
+import { Form } from "@remix-run/react";
 import { db } from "~/utils/db.server"
 import { formatDate } from "~/utils/formatDate";
 import { logger } from "~/utils/logger";
 
+type HomeworkCompleted = Prisma.HomeworkCompletedGetPayload<{ include: { homework: true}}>
+
 type LoaderData = { homework: Array<HomeworkCompleted> };
 
-export const loader: LoaderFunction = async (args) => {
+export const loader = async (args: LoaderArgs) => {
     const { userId } = await getAuth(args)
 
     if (!userId)
         return redirect("/signin")
 
     logger?.info("Fetching homework completed data for user", {
-        userId: userId
+        userId
     })
 
     try {
         const data: LoaderData = {
             homework: await db.homeworkCompleted.findMany({
                 where: {
-                    userId: userId ?? ""
+                    userId
                 },
                 include: {
                     homework: true
@@ -46,11 +48,14 @@ export const action: ActionFunction =  async (args) => {
     const body = await args.request.formData();
     const homeworkId = Number(body.get("homeworkId") ?? 0)
 
+    if (!userId)
+        return
+
     await db.homeworkCompleted.update({
         where: {
             homeworkId_userId: {
-                homeworkId: homeworkId,
-                userId: userId ?? ""
+                homeworkId,
+                userId
             }
         },
         data: {
@@ -77,7 +82,7 @@ export default function HomeworkPage() {
             <td>{formatDate(homework.lastCompletionDate)}</td>
             <td>
                 <Form method="post">
-                    <input type={"hidden"} name="homeworkId" value={homework.id} />
+                    <input type={"hidden"} name="homeworkId" value={homework.homeworkId} />
                     <Button type="submit">
                         Complete
                     </Button>

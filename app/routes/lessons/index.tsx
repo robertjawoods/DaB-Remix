@@ -1,16 +1,17 @@
 import { getAuth } from "@clerk/remix/ssr.server"
 import { Table, Title } from "@mantine/core"
-import type { LessonsCompleted } from "@prisma/client"
-import { ActionFunction, LoaderFunction, MetaFunction, redirect } from "@remix-run/node";
-import { json } from "@remix-run/node"
-import { useLoaderData } from "@remix-run/react"
+import { Prisma } from "@prisma/client"
+import { ActionFunction, LoaderArgs,  MetaFunction, redirect } from "@remix-run/node";
 import { logger } from "~/utils/logger"
 import { db } from "~/utils/db.server"
 import { LessonRow } from "~/components/LessonRow";
+import { json, useLoaderData } from "~/utils";
+
+export type LessonsCompleted = Prisma.LessonsCompletedGetPayload<{include: {lesson: true}}>;
 
 type LoaderData = { lessons: Array<LessonsCompleted> }
 
-export const loader: LoaderFunction = async (args) => {
+export const loader = async (args: LoaderArgs) => {
     const { userId } = await getAuth(args)
     if (!userId)
         return redirect("/signin")
@@ -23,6 +24,7 @@ export const loader: LoaderFunction = async (args) => {
             include: {
                 lesson: {
                     select: {
+                        index: true,
                         id: true,
                         name: true
                     }
@@ -58,11 +60,14 @@ export const action: ActionFunction =  async (args) => {
         lessonId: lessonId
     })
 
+    if (!userId)
+        return;
+
     const result = await db.lessonsCompleted.update({
         where: {
             lessonId_userId: {
-                lessonId: lessonId,
-                userId: userId ?? ""
+                lessonId,
+                userId
             }
         },
         data: {
@@ -84,9 +89,9 @@ export const meta: MetaFunction = () => {
 export default function Lessons() {
     const data = useLoaderData<LoaderData>();
 
-    const rows = data.lessons.map(lesson => {
+    const rows = data.lessons.map((lesson) => {
         return (
-            <LessonRow lesson={lesson as LessonsCompleted} key={lesson.lessonId} />
+            <LessonRow lesson={lesson} key={lesson.lessonId} />
         );
     })
 

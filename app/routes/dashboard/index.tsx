@@ -18,9 +18,9 @@ type LoaderData = {
   challengesCompleted: Array<ChallengesCompleted>;
   lessonsCompleted: Array<LessonsCompleted>;
   timeSpent: {
-    h: number,
-    m: number, 
-    s: number
+    h: number;
+    m: number;
+    s: number;
   };
 };
 
@@ -35,13 +35,15 @@ export const loader = async (args: LoaderArgs) => {
     },
   });
 
-  const timeSpent = toHoursAndMinutes(fiftyTime
-    .map((time) => {
-      return Math.abs(
-        (time.startDate.getTime() - time.endDate.getTime()) / 1000
-      );
-    })
-    .reduce((prev, curr) => prev + curr, 0));
+  const timeSpent = toHoursAndMinutes(
+    fiftyTime
+      .map((time) => {
+        return Math.abs(
+          (time.startDate.getTime() - time.endDate.getTime()) / 1000
+        );
+      })
+      .reduce((prev, curr) => prev + curr, 0)
+  );
 
   const data: LoaderData = {
     homeworkCompleted: await db.homeworkCompleted.findMany({
@@ -59,7 +61,7 @@ export const loader = async (args: LoaderArgs) => {
         userId: userId ?? "",
       },
     }),
-    timeSpent
+    timeSpent,
   };
 
   return json(data);
@@ -195,7 +197,10 @@ export default function Dashboard() {
         {homeworkCompletedStats()}
         {challengesCompletedStats()}
         {lessonsCompletedStats()}
-        <Text>Time Spent: {formatTimeValue(timeSpent.h)}:{formatTimeValue(timeSpent.m)}:{formatTimeValue(timeSpent.s)}</Text>
+        <Text>
+          Time Spent: {formatTimeValue(timeSpent.h)}:
+          {formatTimeValue(timeSpent.m)}:{formatTimeValue(timeSpent.s)}
+        </Text>
       </Grid>
     </Box>
   );

@@ -13,46 +13,45 @@ export const meta: MetaFunction = () => {
   };
 };
 
-export const action: ActionFunction =  async (args) => {
-  const { userId } = await getAuth(args)
+export const action: ActionFunction = async (args) => {
+  const { userId } = await getAuth(args);
 
   const formData = await args.request.formData();
 
-  console.log("adding time")
+  console.log("adding time");
 
-  const start = formData.get("start") as string
-  const end = formData.get("end") as string
-  
+  const start = formData.get("start") as string;
+  const end = formData.get("end") as string;
+
   await db.fiftyTime.create({
     data: {
       userId: userId ?? "",
-      startDate: new Date(start), 
-      endDate: new Date(end)
-    }
-  })
+      startDate: new Date(start),
+      endDate: new Date(end),
+    },
+  });
 
   return null;
 };
 
-
-export default function Fifty() { 
+export default function Fifty() {
   const [start, setStart] = useState<Date>(new Date());
-  const [end, setEnd] = useState<Date>(new Date())
+  const [end, setEnd] = useState<Date>(new Date());
 
-  const {seconds, hours, minutes, setIsRunning, reset } = useTimer(() => {
+  const { seconds, hours, minutes, setIsRunning, reset } = useTimer(() => {
     setEnd(new Date());
-  })
+  });
 
   const submitTime = () => {};
 
   const startTimer = () => {
     setIsRunning(true);
     setStart(new Date());
-  }; 
+  };
 
   const pauseTimer = () => {
-    setIsRunning(false);    
-  }
+    setIsRunning(false);
+  };
 
   return (
     <Box>
@@ -60,7 +59,8 @@ export default function Fifty() {
 
       <Box>
         <Text>
-          Time: {formatTimeValue(hours)}:{formatTimeValue(minutes)}:{formatTimeValue(seconds)}
+          Time: {formatTimeValue(hours)}:{formatTimeValue(minutes)}:
+          {formatTimeValue(seconds)}
         </Text>
         <Box>
           <Button onClick={startTimer}>Start Timer</Button>
@@ -70,7 +70,6 @@ export default function Fifty() {
             <input type={"hidden"} value={end.toISOString()} name="end" />
             <Button type="submit">Submit Time</Button>
           </Form>
-          
         </Box>
       </Box>
     </Box>

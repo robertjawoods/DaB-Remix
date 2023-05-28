@@ -1,11 +1,8 @@
 import { Logtail } from "@logtail/node";
 
+let logger: Logtail | null = null;
 
-let logger: Logtail | null = null; 
-
-if (!logger)
-    logger = new Logtail(process.env.LOGTAIL_TOKEN ?? "");
-
+if (!logger) logger = new Logtail(process.env.LOGTAIL_TOKEN ?? "");
 
 // async function enrichLogs(log: ILogtailLog): Promise<ILogtailLog> {
 //     return {
@@ -14,4 +11,4 @@ if (!logger)
 //     };
 // }
 
-export {logger};
+export { logger };

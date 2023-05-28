@@ -1,1 +1,4 @@
-export { typedjson as json, useTypedLoaderData as useLoaderData } from "remix-typedjson";
+export {
+  typedjson as json,
+  useTypedLoaderData as useLoaderData,
+} from "remix-typedjson";
